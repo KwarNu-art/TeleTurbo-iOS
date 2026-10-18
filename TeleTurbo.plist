@@ -7,7 +7,6 @@
         <key>Bundles</key>
         <array>
             <string>ph.telegra.Telegraph</string>
-            <string>com.apple.springboard</string>
         </array>
     </dict>
 </dict>

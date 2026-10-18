@@ -1,9 +1,9 @@
 Package: com.teleturbo.ios
 Name: TeleTurbo (Telegram Ultra Performance)
-Depends: mobilesubstrate (>= 0.9.5000)
-Version: 1.0.0
+Depends: mobilesubstrate (>= 0.9.5000), preferenceloader
+Version: 1.1.0
 Architecture: iphoneos-arm64
-Description: World-fastest Telegram iOS performance tweak. Freezes background apps, eliminates typing lag, stops phone heating, and purges RAM.
+Description: World-fastest Telegram performance tweak for iPhone 7 Plus & iOS 15. Real-time on-screen FPS counter circle, zero-lag typing acceleration, anti-overheating defense, and in-Settings controls.
 Maintainer: TeleTurbo Engineering
 Author: TeleTurbo Community
 Section: Tweaks

@@ -2,7 +2,7 @@ THEOS_PACKAGE_SCHEME ?= rootless
 TARGET := iphone:clang:latest:15.0
 ARCHS := arm64 arm64e
 
-INSTALL_TARGET_PROCESSES = Telegraph SpringBoard
+INSTALL_TARGET_PROCESSES = Telegraph
 
 include $(THEOS)/makefiles/common.mk
 
