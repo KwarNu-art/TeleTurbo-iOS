@@ -21,69 +21,57 @@ permissions:
 
 jobs:
   build-tele-turbo:
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Setup Theos iOS Suite
-        run: |
-          echo "Setting up Theos..."
-          export THEOS=~/theos
-          git clone --recursive https://github.com/theos/theos.git $THEOS
-          
-          echo "Installing iOS 16.5 SDK..."
-          curl -LO https://github.com/xybp888/iOS-SDKs/releases/download/iOS-16.5/iPhoneOS16.5.sdk.tar.xz
-          tar -xf iPhoneOS16.5.sdk.tar.xz -C $THEOS/sdks/
-          rm -f iPhoneOS16.5.sdk.tar.xz
-          
-          echo "THEOS=$THEOS" >> $GITHUB_ENV
-          echo "$THEOS/bin" >> $GITHUB_PATH
+      - name: ⚙️ Setup Theos Suite (Instant Ubuntu Runner)
+        uses: Randomblock1/theos-action@v1
 
-      - name: Compile TeleTurbo Tweak (.deb & .dylib)
+      - name: 🔨 Compile TeleTurbo arm64 Tweak (.deb & .dylib)
         run: |
           make clean
           make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
-          cp packages/*.deb ./TeleTurbo-Rootless.deb || true
-          
-          make clean
-          make package FINALPACKAGE=1
-          cp packages/*.deb ./TeleTurbo-Rootful.deb || true
+          cp packages/*.deb ./TeleTurbo-Rootless-arm64.deb || true
           
           mkdir -p build-dylib
-          dpkg-deb -x ./TeleTurbo-Rootless.deb ./build-dylib/
-          find ./build-dylib -name "*.dylib" -exec cp {} ./TeleTurbo.dylib \;
-          ls -la TeleTurbo.dylib
+          dpkg-deb -x ./TeleTurbo-Rootless-arm64.deb ./build-dylib/
+          find ./build-dylib -name "*.dylib" -exec cp {} ./TeleTurbo.dylib \; || true
+          
+          zip -r TeleTurbo-Injection-Kit.zip TeleTurbo.dylib src/ || true
+          ls -la *.deb
 
-      - name: Package Release Files
-        run: |
-          zip -r TeleTurbo-Injection-Kit.zip TeleTurbo.dylib src/
-          echo "Created TeleTurbo-Injection-Kit.zip"
-
-      - name: Upload Artifacts
+      - name: 🚀 Upload Compiled Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: TeleTurbo-iOS-Build-Artifacts
+          name: TeleTurbo-iOS-arm64-Build-Artifacts
           path: |
             *.deb
             *.dylib
             *.zip
 
-      - name: Publish GitHub Release
+      - name: 🏷️ Publish GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v1.0.0-turbo
-          name: 'TeleTurbo Telegram iOS Release v1.0.0'
+          tag_name: v1.0.0-arm64
+          name: 'TeleTurbo Telegram iOS Release v1.0.0 (arm64)'
           body: |
-            ## ⚡ TeleTurbo iOS - Ultra Performance & Anti-Thermal Edition
+            ## ⚡ TeleTurbo iOS - Super Performance (arm64 Edition)
             
-            Compiled automatically for **@${{ github.repository_owner }}**:
-            - **TeleTurbo-Rootless.deb**: For Dopamine, Taurine, palera1n (iOS 15.0 - 17.0+).
-            - **TeleTurbo-Rootful.deb**: For legacy rootful jailbreaks.
+            This automated release includes:
+            - **TeleTurbo-Rootless-arm64.deb**: Native 64-bit package for **Dopamine, Taurine, palera1n (iOS 15.0 - 17.0+)**.
             - **TeleTurbo.dylib**: Standalone dynamic library for TrollStore, Azule, or Esign injection.
             - **TeleTurbo-Injection-Kit.zip**: Full injection kit.
+            
+            ### ✨ Features:
+            - 🚀 **VIP CPU Scheduling**: Nice -20 priority & `QOS_CLASS_USER_INTERACTIVE`
+            - 🧊 **Background App Freezer**: Suspends background battery drains
+            - 🚫 **Bloat Stripper**: Story carousel killed, Lottie vector animations throttled
+            - ⚡ **Zero-Lag Typing**: Instantaneous message dispatch & typing responsiveness
+            - ❄️ **Anti-Thermal Shield**: Prevents iPhone overheating and battery depletion
           files: |
             *.deb
             *.dylib
